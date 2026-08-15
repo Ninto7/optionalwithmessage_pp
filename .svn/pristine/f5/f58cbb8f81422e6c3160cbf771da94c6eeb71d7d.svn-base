@@ -1,0 +1,74 @@
+package de.uniwue.jpp.exams;
+
+import de.uniwue.jpp.errorhandling.OptionalWithMessage;
+import de.uniwue.jpp.errorhandling.OptionalWithMessageMsg;
+import de.uniwue.jpp.errorhandling.OptionalWithMessageVal;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+
+public class ExamDatabaseOWM {
+    private Map<Student, Map<Exam, ExamResult>> data;
+    public ExamDatabaseOWM(Map<Student, Map<Exam, ExamResult>> data) {
+        this.data = data;
+    }
+
+    public OptionalWithMessage<Student> getStudent(int matriculation) {
+        for (Student s: data.keySet()) {
+            if(s.getMatriculation()==matriculation){
+                return new OptionalWithMessageVal<Student>(s, null);
+            }
+        }
+        return new OptionalWithMessageMsg<Student>("No student with matriculation "+matriculation);
+    }
+
+    public OptionalWithMessage<Map<Exam, ExamResult>> getAllExamsWithResultsOf(Student stud) {
+       if(stud==null) throw  new NullPointerException();
+       return OptionalWithMessage.ofNullable(data.get(stud),"Student is unknown!");
+    }
+
+    public OptionalWithMessage<Collection<Exam>> getAllExamsOf(Student stud) {
+        if(stud==null) throw new NullPointerException();
+        return getAllExamsWithResultsOf(stud).map(Map::keySet);
+    }
+
+    public OptionalWithMessage<Collection<Exam>> getAllExamsOf(int matriculation) {
+        return getStudent(matriculation).flatMap(this::getAllExamsOf);
+    }
+        //passt
+    public static OptionalWithMessage<ExamResult> getResultOf(Exam exam, Map<Exam, ExamResult> results) {
+        if (exam==null || results==null) throw new NullPointerException();
+        for (Exam e: results.keySet()){
+            if(e== exam){
+                return OptionalWithMessage.of(results.get(e));
+            }
+        }
+        return OptionalWithMessage.ofMsg("No result for this exam!");
+    }
+
+    public OptionalWithMessage<ExamResult> getResult(int matriculation, Exam exam) {
+        return getStudent(matriculation).flatMap(this::getAllExamsWithResultsOf).flatMap(temp->getResultOf(exam, temp));
+    }
+
+    public OptionalWithMessage<String> getNameOf(int matriculation) {
+        throw new UnsupportedOperationException();
+    }
+
+    public boolean hasPassed(int matriculation, Exam exam) {
+        throw new UnsupportedOperationException();
+    }
+
+    public Collection<Student> hasPassed(Collection<Integer> matriculations, Exam exam) {
+        throw new UnsupportedOperationException();
+    }
+
+    public static OptionalWithMessage<Double> getAvg(Collection<Integer> nums) {
+        throw new UnsupportedOperationException();
+    }
+
+    public OptionalWithMessage<Double> getAvgAge(List<Integer> matriculations) {
+        throw new UnsupportedOperationException();
+    }
+}

@@ -1,0 +1,57 @@
+package de.uniwue.jpp.exams;
+
+import java.util.Objects;
+
+public class Student {
+    private String name;
+    private int matrikelnummer;
+    private int alter;
+
+    public Student(String name, int matriculation, int age) {
+        if (name == null){
+            throw new NullPointerException();
+        } else if (name.isEmpty()) {
+            throw new IllegalArgumentException("name cannot be empty!");
+        } else {
+            this.name = name;
+        }
+        this.matrikelnummer = matriculation;
+        this.alter = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getMatriculation() {
+        return matrikelnummer;
+    }
+
+    public int getAge() {
+        return alter;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null) return false;
+        if(o.getClass() == this.getClass()){
+            if (((Student) o).getMatriculation()== getMatriculation()){
+                return true;
+            }else {
+                return false;
+            }
+        }else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(matrikelnummer);
+    }
+
+    @Override
+    public String toString() {
+        return "Student \""+name +"\"";
+    }
+}
